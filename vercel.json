@@ -1,0 +1,21 @@
+# Servidor Avatar IA Gemini para Vercel
+
+## Qué hace
+Este servidor crea un endpoint seguro:
+
+POST /api/tutor
+
+El HTML/SCORM envía la pregunta del estudiante y el contexto del recurso.
+El servidor llama a Gemini usando la variable secreta GEMINI_API_KEY.
+
+## Archivos
+- api/tutor.js
+- package.json
+- vercel.json
+- index.html
+
+## Variable de entorno obligatoria
+GEMINI_API_KEY = tu clave nueva de Google AI Studio
+
+## Prueba local opcional
+No pegues la clave dentro del HTML.
