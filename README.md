@@ -1,11 +1,3 @@
-{
-  "name": "servidor-avatar-ia-gemini",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "node api/tutor.js"
-  },
-  "dependencies": {}
-}
+# Servidor Avatar IA Gemini
+
+Archivos corregidos para Vercel.

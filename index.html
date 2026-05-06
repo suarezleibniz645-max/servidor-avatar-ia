@@ -1,85 +1,46 @@
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método no permitido" });
-  }
-
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({
-      error: "Falta configurar GEMINI_API_KEY en las variables de entorno."
-    });
-  }
-
-  try {
-    const { pregunta = "", contexto = "", modo = "tutor" } = req.body || {};
-
-    if (!pregunta.trim()) {
-      return res.status(400).json({ error: "La pregunta está vacía." });
-    }
-
-    const systemPrompt = `
-Eres un tutor educativo dentro de un recurso HTML/SCORM.
-Responde en español claro, breve y pedagógico.
-No menciones API, servidores, claves, tokens ni detalles técnicos internos.
-Si el estudiante pregunta algo fuera del contenido, redirígelo amablemente al tema del recurso.
-Cuando sea útil, da ejemplos cortos.
-Modo actual: ${modo}
-Contexto del recurso:
-${contexto || "No se proporcionó contexto específico."}
-`;
-
-    const payload = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `${systemPrompt}\n\nPregunta del estudiante:\n${pregunta}`
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        temperature: 0.4,
-        maxOutputTokens: 650
-      }
-    };
-
-    const model = "gemini-1.5-flash";
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-    const geminiResponse = await fetch(url, {
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prueba Avatar IA Gemini</title>
+<style>
+body{font-family:Arial,sans-serif;background:#14377D;color:white;display:grid;place-items:center;height:100vh;margin:0}
+.card{background:white;color:#061731;border-radius:22px;padding:26px;max-width:640px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+textarea,input{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid #ccd7ef;padding:12px;margin:8px 0}
+button{background:#f7d047;border:none;border-radius:12px;padding:12px 18px;font-weight:bold;cursor:pointer}
+#respuesta{background:#eef4ff;border-radius:14px;padding:14px;margin-top:14px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Prueba de Avatar IA</h1>
+  <p>Esta página prueba tu servidor puente en Vercel.</p>
+  <label>Contexto del recurso</label>
+  <textarea id="contexto">El recurso trata sobre exégesis bíblica, crítica textual y análisis del Antiguo Testamento.</textarea>
+  <label>Pregunta</label>
+  <input id="pregunta" value="Explícame qué es una variante textual con un ejemplo breve.">
+  <button onclick="preguntar()">Preguntar</button>
+  <div id="respuesta">Esperando pregunta...</div>
+</div>
+<script>
+async function preguntar(){
+  const respuesta = document.getElementById("respuesta");
+  respuesta.textContent = "Pensando...";
+  try{
+    const r = await fetch("/api/tutor", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        pregunta: document.getElementById("pregunta").value,
+        contexto: document.getElementById("contexto").value
+      })
     });
-
-    const data = await geminiResponse.json();
-
-    if (!geminiResponse.ok) {
-      return res.status(geminiResponse.status).json({
-        error: "Gemini respondió con error.",
-        details: data
-      });
-    }
-
-    const respuesta =
-      data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("\n").trim()
-      || "No pude generar una respuesta en este momento.";
-
-    return res.status(200).json({ respuesta });
-  } catch (error) {
-    return res.status(500).json({
-      error: "Error interno del servidor.",
-      details: String(error?.message || error)
-    });
+    const data = await r.json();
+    respuesta.textContent = data.respuesta || data.error || "Sin respuesta.";
+  }catch(e){
+    respuesta.textContent = "Error de conexión: " + e.message;
   }
 }
+</script>
+</body>
+</html>
