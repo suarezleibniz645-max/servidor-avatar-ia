@@ -1,46 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Prueba Avatar IA Gemini</title>
-<style>
-body{font-family:Arial,sans-serif;background:#14377D;color:white;display:grid;place-items:center;height:100vh;margin:0}
-.card{background:white;color:#061731;border-radius:22px;padding:26px;max-width:640px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-textarea,input{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid #ccd7ef;padding:12px;margin:8px 0}
-button{background:#f7d047;border:none;border-radius:12px;padding:12px 18px;font-weight:bold;cursor:pointer}
-#respuesta{background:#eef4ff;border-radius:14px;padding:14px;margin-top:14px;white-space:pre-wrap}
-</style>
-</head>
-<body>
-<div class="card">
-  <h1>Prueba de Avatar IA</h1>
-  <p>Esta página prueba tu servidor puente en Vercel.</p>
-  <label>Contexto del recurso</label>
-  <textarea id="contexto">El recurso trata sobre exégesis bíblica, crítica textual y análisis del Antiguo Testamento.</textarea>
-  <label>Pregunta</label>
-  <input id="pregunta" value="Explícame qué es una variante textual con un ejemplo breve.">
-  <button onclick="preguntar()">Preguntar</button>
-  <div id="respuesta">Esperando pregunta...</div>
-</div>
-<script>
-async function preguntar(){
-  const respuesta = document.getElementById("respuesta");
-  respuesta.textContent = "Pensando...";
-  try{
-    const r = await fetch("/api/tutor", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        pregunta: document.getElementById("pregunta").value,
-        contexto: document.getElementById("contexto").value
-      })
-    });
-    const data = await r.json();
-    respuesta.textContent = data.respuesta || data.error || "Sin respuesta.";
-  }catch(e){
-    respuesta.textContent = "Error de conexión: " + e.message;
-  }
+{
+  "name": "servidor-avatar-ia",
+  "version": "1.0.0",
+  "type": "module"
 }
-</script>
-</body>
-</html>
