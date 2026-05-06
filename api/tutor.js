@@ -27,7 +27,7 @@ ${contexto || "No se proporcionó contexto específico."}`;
       generationConfig: { temperature: 0.4, maxOutputTokens: 650 }
     };
 
-    const model = "gemini-1.5-flash";
+    const model = "gemini-2.5-flash-lite";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
